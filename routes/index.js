@@ -130,7 +130,6 @@ router.get('/txs', async function (req, res, next) {
     let result_db_transaction = await dbmanager.dbSelectAll(req, LinkaScannerAgentTransaction, where_transaction, order_transaction, limit_transaction);
     let result_transaction = [];
     if (result_db_transaction.result_code == true) {
-        // logger.debug("result_db_transaction:->" + JSON.stringify(result_db_transaction.result_data));
 
         result_transaction = result_db_transaction.result_data;
     }
@@ -153,7 +152,6 @@ router.get('/blocks', async function (req, res, next) {
     let result_db_block = await dbmanager.dbSelectAll(req, LinkaScannerAgentBlock, null, order_block, limit_transaction);
     let result_block = [];
     if (result_db_block.result_code == true) {
-        // logger.debug("result_db_block.result_data[0].from:->" + result_db_block.result_data[0].writeSet);
         result_block = result_db_block.result_data;
     }
 

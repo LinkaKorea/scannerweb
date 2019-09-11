@@ -13,6 +13,8 @@
 
 ## Run
 
+## Contact
+We can answer your questions related to this smartcontract if you have need help. Just send an email, hansuljang@linka.io or hongjoolee@linka.io.
 
 ## License
 It's not decided yet, but we'll update it later.

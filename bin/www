@@ -171,19 +171,6 @@ wsServer.on('request', function (request) {
       }
       console.log(block_Num);
 
-      // let where_transaction = {
-      //   id: tx_Id + 1
-      // }
-      // let result_db_transaction = await dbmanager.dbSelectOne(null, LinkaScannerAgentTransaction, where_transaction);
-      // let result_transaction = null;
-      // if (result_db_transaction.result_code == true && result_db_transaction.result_data.id != tx_Id) {
-      //   console.log("result_db_transaction:->" + JSON.stringify(result_db_transaction.result_data));
-      //   result_transaction = result_db_transaction.result_data;
-      //   tx_Id = tx_Id + 1;
-      //   connection.sendUTF(JSON.stringify({ transaction: result_transaction }));
-      // }
-      // console.log(tx_Id);
-
     }, 3000);
 
     connection.on('close', function (reasonCode, description) {
