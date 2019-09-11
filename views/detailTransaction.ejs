@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <title>linkascan</title>
+    <link rel="stylesheet" href="/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/css/animate.min.css">
+    <link rel="stylesheet" href="/css/hs.megamenu.css">
+    <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="/css/jquery-ui.min.css?v=0.0.7">
+    <link rel="stylesheet" href="/css/theme.min.css?v=0.4.3.4">
+    <link rel="stylesheet" href="/css/custom.css?v=0.4.1.1">
+    <script src="/lib/jquery-3.3.1.min.js"></script>
+</head>
+
+<body id="body">
+    <div class="wrapper">
+        <header id="header" class="u-header" include-html>
+            <% include ./header %>
+        </header>
+        <main id="content" class="bg-light" role="main">
+            <div class="container py-3">
+                <div class="d-sm-flex align-items-center">
+                    <div class="mb-2 mb-sm-0">
+                        <h1 class="h4 mb-0">Transaction Details </h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container space-bottom-2">
+                <div class="card">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="home-tab">
+                            <div id="ContentPlaceHolder1_maintable" class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">
+                                        Transaction Hash:</div>
+                                    <div class="col-md-9">
+                                        <%= transaction.txHash %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">Status:
+                                    </div>
+                                    <div class="col-md-9">
+                                        <%= transaction.status %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center  mt-1">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">Block:
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div class="d-flex">
+                                            <a class="font-weight-sm-bold mr-2"
+                                                href="/block/<%= transaction.blockId %>">
+                                                <%= transaction.blockId %>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">
+                                        Timestamp:</div>
+                                    <div class="col-md-9">
+                                        <%= transaction.createDate %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">From:
+                                    </div>
+                                    <div class="col-md-9">
+                                        <% function getfrom(){ return (JSON.parse(transaction.writeSet)[2].key.substr(5) == JSON.parse(transaction.writeSet)[1].key)?JSON.parse(transaction.writeSet)[1]:JSON.parse(transaction.writeSet)[0]} %>
+
+                                        <% if(totype != "NONCE") { %>
+
+                                        <a href="/address/<%= getfrom().key %>"><%= getfrom().key %></a>,
+                                        (
+                                        <% function pad(n, width) { n = n + ''; return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n; } %>
+                                        <%= pad(getfrom().value, 19).replace(/\B(?=(\d{18}$))/g, ".") %>
+                                        <%= fromtype %> )
+
+                                        <% } else { %>
+                                        <a
+                                            href="/address/<%= JSON.parse(transaction.writeSet)[0].key %>"><%= JSON.parse(transaction.writeSet)[0].key %></a>,
+                                        (
+                                        <% function pad(n, width) { n = n + ''; return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n; } %>
+                                        <%= pad(JSON.parse(transaction.writeSet)[0].value, 19).replace(/\B(?=(\d{18}$))/g, ".") %>
+                                        <%= fromtype %> )
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <% function getto(){ return (JSON.parse(transaction.writeSet)[2].key.substr(5) == JSON.parse(transaction.writeSet)[0].key)?JSON.parse(transaction.writeSet)[1]:JSON.parse(transaction.writeSet)[0]} %>
+
+                                    <% if(totype != "NONCE") { %>
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">To:</div>
+                                    <div class="col-md-9">
+                                        <a href="/address/<%= getto().key %>">
+                                            <%= getto().key %>
+                                        </a>,
+                                        (
+                                        <%= pad(getto().value, 19).replace(/\B(?=(\d{18}$))/g, ".") %>
+                                        <%= totype %> )
+                                    </div>
+                                    <% } else { %>
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">
+                                        Discription:</div>
+                                    <div class="col-md-9">
+                                        주소 등록 Transaction
+                                    </div>
+
+                                    <% } %>
+
+
+
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">
+                                        CreateMspId:</div>
+                                    <div class="col-md-9">
+                                        <%= transaction.createMspId %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">
+                                        EndorserMspId:</div>
+                                    <div class="col-md-9">
+                                        <%= transaction.endorserMspId %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">Nonce:
+                                    </div>
+                                    <div class="col-md-9">
+                                        <%= transaction.creatorNonce %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">Readset:
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div id="rawtab" data-target-group="inputDataGroup">
+                                            <textarea readonly="" spellcheck="false"
+                                                class="form-control bg-light text-secondary text-monospace p-3" rows="4"
+                                                id="readset"><%= transaction.readSet %>
+                                            </textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">Writeset:
+                                    </div>
+                                    <div class="col-md-9">
+                                        <div id="rawtab" data-target-group="inputDataGroup">
+                                            <textarea readonly="" spellcheck="false"
+                                                class="form-control bg-light text-secondary text-monospace p-3" rows="4"
+                                                id="writeset"><%= transaction.writeSet %>
+                                                </textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <% include ./footer %>
+        </footer>
+    </div>
+
+</body>
+
+</html>

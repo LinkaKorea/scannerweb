@@ -1,0 +1,19 @@
+{
+  "dev": {
+    "mysql": {
+      "host": "localhost",
+      "port": 3306,
+      "user": "linka",
+      "password": "linkapassword",
+      "database": "scanneragent",
+      "dialect": "mysql",
+      "pool": {
+        "max": 5,
+        "min": 5,
+        "idle": 10000
+      },
+      "timezone": "+09:00"
+    }
+    
+  }
+}

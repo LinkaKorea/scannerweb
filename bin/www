@@ -1,0 +1,197 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('scannerweb:server');
+var http = require('http');
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+var port = normalizePort(process.env.PORT || '5000');
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+
+var server = http.createServer(app);
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
+
+
+// websocket server
+
+var WebSocketServer = require('websocket').server;
+const sequelize = require("../config/sequelize.js");
+const dbmanager = require("../lib/dbmanager.js");
+
+const LinkaScannerAgentBalance = sequelize.db.linkaScannerAgentBalance;
+const LinkaScannerAgentBlock = sequelize.db.linkaScannerAgentBlock;
+const LinkaScannerAgentTransaction = sequelize.db.linkaScannerAgentTransaction;
+
+
+var wsserver = http.createServer(function (request, response) {
+  console.log((new Date()) + ' Received request for ' + request.url);
+  response.writeHead(404);
+  response.end();
+});
+
+wsserver.listen(8080, function () {
+  console.log((new Date()) + ' Server is listening on port 8080');
+});
+
+wsServer = new WebSocketServer({
+  httpServer: wsserver,
+  autoAcceptConnections: false
+});
+
+function originIsAllowed(origin) {
+  // put logic here to detect whether the specified origin is allowed.
+  return true;
+}
+
+wsServer.on('request', function (request) {
+  if (!originIsAllowed(request.origin)) {
+    // Make sure we only accept requests from an allowed origin
+    request.reject();
+    console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
+    return;
+  }
+
+  var connection = request.accept('echo-protocol', request.origin);
+  //var connection = request.accept(null, request.origin);
+  console.log((new Date()) + ' Connection accepted.' + connection.remoteAddress);
+  console.log(request.origin, request.key);
+  connection.on('message', async function (message) {
+    console.log(message);
+    var block_Num = JSON.parse(message.utf8Data).blockNum;
+    var tx_Id = JSON.parse(message.utf8Data).txid;
+    var start = setInterval(async function () {
+
+      let where_block = {
+        blockNum: block_Num + 1
+      }
+      let result_db_block = await dbmanager.dbSelectOne(null, LinkaScannerAgentBlock, where_block);
+      let result_block = null;
+      if (result_db_block.result_code == true && result_db_block.result_data.blockNum != block_Num) {
+        console.log("result_db_block:->" + JSON.stringify(result_db_block.result_data));
+        result_block = result_db_block.result_data;
+        block_Num = block_Num + 1;
+        connection.sendUTF(JSON.stringify({ block: result_block }));
+
+
+
+        let where_transaction = {
+          blockId: result_block.blockNum
+        }
+        let order_transaction = [['id', 'ASC']]
+        let result_db_transaction = await dbmanager.dbSelectAll(null, LinkaScannerAgentTransaction, where_transaction, order_transaction);
+        let result_transaction = null;
+        if (result_db_transaction.result_code == true) {
+          for (var i = 0; i < result_db_transaction.result_data.length; i++) {
+            console.log("result_db_transaction:->" + JSON.stringify(result_db_transaction.result_data[i]));
+            result_transaction = result_db_transaction.result_data[i];
+            connection.sendUTF(JSON.stringify({ transaction: result_transaction }));
+          }
+
+        }
+        console.log(tx_Id);
+      }
+      console.log(block_Num);
+
+      // let where_transaction = {
+      //   id: tx_Id + 1
+      // }
+      // let result_db_transaction = await dbmanager.dbSelectOne(null, LinkaScannerAgentTransaction, where_transaction);
+      // let result_transaction = null;
+      // if (result_db_transaction.result_code == true && result_db_transaction.result_data.id != tx_Id) {
+      //   console.log("result_db_transaction:->" + JSON.stringify(result_db_transaction.result_data));
+      //   result_transaction = result_db_transaction.result_data;
+      //   tx_Id = tx_Id + 1;
+      //   connection.sendUTF(JSON.stringify({ transaction: result_transaction }));
+      // }
+      // console.log(tx_Id);
+
+    }, 3000);
+
+    connection.on('close', function (reasonCode, description) {
+      clearInterval(start);
+    });
+  });
+  connection.on('close', function (reasonCode, description) {
+    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+    console.log(request.key);
+  });
+});

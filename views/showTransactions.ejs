@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <title>linkascan</title>
+    <link rel="stylesheet" href="/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/css/animate.min.css">
+    <link rel="stylesheet" href="/css/hs.megamenu.css">
+    <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="/css/jquery-ui.min.css?v=0.0.7">
+    <link rel="stylesheet" href="/css/theme.min.css?v=0.4.3.4">
+    <link rel="stylesheet" href="/css/custom.css?v=0.4.1.1">
+    <script src="/lib/jquery-3.3.1.min.js"></script>
+    <script src="/lib/jquery.timeago.js"></script>
+</head>
+
+<body id="body">
+    <div class="wrapper">
+
+        <header id="header" class="u-header" include-html>
+            <% include ./header %>
+        </header>
+
+        <main id="content" class="bg-light" role="main">
+            <div class="container py-3">
+                <div class="d-sm-flex align-items-center">
+                    <div class="mb-1 mb-md-0">
+                        <h1 class="h4 mb-0">Transactions<span class="small text-secondary"></span>
+                            <% if (blockNum > -1 ) { %>
+                            <p class="mb-0 text-break small">
+                                <span id="ContentPlaceHolder1_divPageTitle" class="small text-secondary">
+                                    For Block <a href="/block/<%= blockNum %>"><span
+                                            class="text-primary text-break"><%= blockNum %></span></a>
+                                </span>
+                            </p>
+                            <% } %>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container space-bottom-2">
+                <div id="ContentPlaceHolder1_mainrow" class="card">
+                    <div class="card-body">
+
+
+                        <div class="d-md-flex justify-content-between mb-4">
+                            <p class="mb-2 mb-md-0">
+                                <span class="d-flex align-items-center">
+                                    <i id="spinwheel" class="fa fa-spin fa-spinner fa-1x fa-pulse mr-1"
+                                        style="display: none;"></i>
+                                    A total of <%= transactionCount %> transactions found
+                                </span>
+                            </p>
+
+                            <nav aria-label="page navigation">
+                                <ul class="pagination pagination-sm mb-0">
+                                    <% if (currentPage == 1) { %>
+                                    <li class="page-item disabled"><span class="page-link">First</span></li>
+                                    <li class="page-item disabled"><span class="page-link"><i
+                                                class="fa fa-chevron-left small"></i></span><span
+                                            class="sr-only">Previous</span></li>
+                                    <% } else { %>
+                                    <li class="page-item"><a class="page-link"
+                                            href="txs?block=<%= blockNum %>&amp;ps=<%= wordNum %>&amp;p=1"><span
+                                                aria-hidden="True">First</span> <span class="sr-only">First</span></a>
+                                    </li>
+                                    <li class="page-item" title="Go to Previous"><a class="page-link"
+                                            href="txs?block=<%= blockNum %>&amp;ps=<%= wordNum %>&amp;p=<%= (currentPage-1) %>"
+                                            aria-label="Previous"><span aria-hidden="True"><i
+                                                    class="fa fa-chevron-left small"></i></span> <span
+                                                class="sr-only">Previous</span></a></li>
+                                    <% } %>
+                                    <li class="page-item disabled"><span class="page-link text-nowrap">Page <strong
+                                                class="font-weight-medium"><%= currentPage %></strong> of <strong
+                                                class="font-weight-medium"><%= parseInt((transactionCount-1)/wordNum)+1 %></strong></span>
+                                    </li>
+                                    <% if (currentPage >= parseInt((transactionCount-1)/wordNum)+1) { %>
+
+                                    <li class="page-item disabled"><span class="page-link"><i
+                                                class="fa fa-chevron-right small"></i></span><span
+                                            class="sr-only">Previous</span></li>
+                                    <li class="page-item disabled"><span class="page-link">Last</span></li>
+
+
+
+                                    <% } else { %><li class="page-item" title="Go to Next"><a class="page-link"
+                                            href="txs?block=<%= blockNum %>&amp;ps=<%= wordNum %>&amp;p=<%= (parseInt(currentPage)+1) %>"
+                                            aria-label="Next"><span aria-hidden="True"><i
+                                                    class="fa fa-chevron-right small"></i></span>
+                                            <span class="sr-only">Next</span></a></li>
+                                    <li class="page-item"><a class="page-link"
+                                            href="txs?block=<%= blockNum %>&amp;ps=<%= wordNum %>&amp;p=<%= parseInt((transactionCount-1)/wordNum)+1 %>"><span
+                                                aria-hidden="True">Last</span> <span class="sr-only">Last</span></a>
+                                    </li>
+                                    <% } %>
+                                </ul>
+                            </nav>
+
+                        </div>
+
+
+
+                        <div class="table-responsive mb-2 mb-md-0">
+                            <table class="table table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th scope="col" width="1">Txn Hash</th>
+                                        <th scope="col" width="1" class="d-none d-sm-table-cell">Block</th>
+                                        <th scope="col">
+                                            <a href="javascript:;" onclick="switchAgeToDateTime(this)"
+                                                id="lnkAgeDateTime" title="Click to show Age Format">Date Time</a>
+                                        </th>
+                                        <th scope="col">From</th>
+                                        <th scope="col">To</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (var i=0; i<transactionList.length; i++) { %>
+                                    <tr>
+                                        <td><span class="hash-tag text-truncate"><a
+                                                    href="/tx/<%= transactionList[i].txHash %>"><%= transactionList[i].txHash %></a></span>
+                                        </td>
+                                        <td class="d-none d-sm-table-cell"><a
+                                                href="/block/<%= transactionList[i].blockId %>"><%= transactionList[i].blockId %></a>
+                                        </td>
+
+                                        <td class="showAge" style="display: none;"><span rel="tooltip"
+                                                data-placement="bottom"> <time class="timeago"
+                                                    datetime="<%= transactionList[i].createDate.toISOString() %>"></time></span>
+                                        </td>
+                                        <td class="showDate"><span rel="tooltip"
+                                                data-placement="bottom"><%= transactionList[i].createDate %></span></td>
+
+                                        <% function getto(i){ return (JSON.parse(transactionList[i].writeSet)[2].key.substr(5) == JSON.parse(transactionList[i].writeSet)[0].key)?JSON.parse(transactionList[i].writeSet)[1].key:JSON.parse(transactionList[i].writeSet)[0].key} %>
+                                        <% if( JSON.parse(transactionList[i].writeSet)[1].key.substr(0,5) != "NONCE") { %>
+                                        <td><span class="hash-tag text-truncate"><a
+                                                    href="/address/<%= JSON.parse(transactionList[i].writeSet)[2].key.substr(5) %>"><%= JSON.parse(transactionList[i].writeSet)[2].key.substr(5) %></a></span>
+                                        </td>
+                                        <td> <span class="hash-tag text-truncate"><a
+                                                    href="/address/<%= getto(i) %>"><%= getto(i) %></a></span>
+                                        </td>
+
+                                        <% } else { %>
+                                        <td><span class="hash-tag text-truncate"><a
+                                                    href="/address/<%= JSON.parse(transactionList[i].writeSet)[0].key %>"><%= JSON.parse(transactionList[i].writeSet)[0].key %></a></span>
+                                        </td>
+                                        <td></td>
+                                        <% } %>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="ContentPlaceHolder1_pageRecords">
+                            <form method="get" id="ctl00">
+                                <div class="aspNetHidden">
+                                    <input type="hidden" name="block" id="block" value="<%= blockNum %>">
+
+                                </div>
+                                <script type="text/javascript">
+                                    var theForm = document.forms['ctl00'];
+                                    if (!theForm) {
+                                        theForm = document.ctl00;
+                                    }
+                                    function __doPostBack() {
+                                        if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+                                            theForm.submit();
+                                        }
+                                    }
+                                //]]>
+                                </script>
+                                <div class="d-md-flex justify-content-between my-3">
+                                    <div class="d-flex align-items-center text-secondary mb-2 mb-md-0">
+                                        Show
+                                        <select name="ps" onchange="javascript:setTimeout('__doPostBack()', 0)"
+                                            id="ContentPlaceHolder1_ddlRecordsPerPage"
+                                            class="custom-select custom-select-xs mx-2">
+                                            <% let n = [10,25,50,100]; n.forEach(function(val){
+                                                if(val == wordNum){ %>
+                                            <option selected="selected" value="<%= val %>"><%= val %></option>
+
+                                            <% } else { %>
+                                            <option value="<%= val %>"><%= val %></option>
+                                            <% }
+                                            }) %>
+
+                                        </select>
+                                        Records
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        <footer>
+            <% include ./footer %>
+        </footer>
+    </div>
+    <script type="text/javascript">
+
+        jQuery(document).ready(function () {
+            $("time.timeago").timeago();
+        });
+
+        function switchAgeToDateTime() {
+            var strVal = $("#lnkAgeDateTime").text();
+            if (strVal == "Age") {
+                $("#lnkAgeDateTime").text("Date Time");
+                $("#lnkAgeDateTime").attr("title", "Click to show Age Format");
+                $(".showDate").show();
+                $(".showAge").hide();
+                sessionStorage.setItem("ShowAs", "Date Time");
+            }
+            else if (strVal == "Date Time") {
+                $("#lnkAgeDateTime").text("Age");
+                $("#lnkAgeDateTime").attr("title", "Click to show Datetime Format");
+                $(".showDate").hide();
+                $(".showAge").show();
+                sessionStorage.setItem("ShowAs", "Age");
+            }
+        }
+    </script>
+</body>
+
+</html>

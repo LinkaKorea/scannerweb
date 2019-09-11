@@ -1,0 +1,334 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <title>Linkascan Blockchain Explorer</title>
+    <link rel="stylesheet" href="/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/css/animate.min.css">
+    <link rel="stylesheet" href="/css/hs.megamenu.css">
+    <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="/css/jquery-ui.min.css?v=0.0.7">
+    <link rel="stylesheet" href="/css/theme.min.css?v=0.4.3.4">
+    <link rel="stylesheet" href="/css/custom.css?v=0.4.1.1">
+    <script src="/lib/jquery-3.3.1.min.js"></script>
+    <script src="/lib/jquery.timeago.js"></script>
+</head>
+
+<body id="body">
+    <div class="wrapper">
+
+        <header id="header" class="u-header" include-html>
+            <% include ./header %>
+        </header>
+
+        <main id="content" class="bg-light" role="main">
+            <div class="container space-bottom-2">
+                <div class="mb-4">
+                    <div class="card gradient-half-primary-body-v1">
+                        <div class="card-body px-sm-4 pb-sm-4 ">
+                            <div class="d-none d-sm-flex align-items-baseline">
+                                <h1 class="h5 text-white">Linka Blockchain Scan</h1>
+                            </div>
+                            <div class="input-group input-group-main">
+                                <div class="input-group-prepend d-none d-md-block">
+                                    <select name="f" id="f"
+                                        class="custom-select custom-arrow-select input-group-text font-size-base filterby">
+                                        <option selected="" value="a">All Filters</option>
+                                        <option value="b">Block</option>
+                                        <option value="t">Transaction</option>
+                                        <option value="a">Address</option>
+                                    </select>
+                                </div>
+                                <input type="text"
+                                    class="form-control form-control--focus-white searchautocomplete ui-autocomplete-input"
+                                    placeholder="Search by Block / Txn Hash / Address"
+                                    aria-describedby="button-header-search" name="q" id="q" autocomplete="off">
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit" id="btnSearch">
+                                        <i class="fa fa-search d-inline-block d-sm-none"></i><span
+                                            class="d-none d-sm-inline-block">Search</sFpan>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h2 class="card-header-title">Latest Blocks</h2>
+                            </div>
+                            <div class="js-scrollbar card-body overflow-hidden mCustomScrollbar _mCS_1 mCS-autoHide"
+                                style="height: 470px; position: relative; overflow: visible;">
+                                <div id="mCSB_1" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside"
+                                    style="max-height: none;" tabindex="0">
+                                    <div id="mCSB_1_container" class="mCSB_container"
+                                        style="position:relative; top:0; left:0;" dir="ltr">
+                                        <div id="block">
+                                            <% for (var i=0; i<blockList.length; i++) { %>
+                                            <div class="row" id="blockList_<%= blockList[i].blockNum %>">
+                                                <div class="col-sm-4">
+                                                    <div class="media align-items-sm-center mr-4 mb-1 mb-sm-0">
+                                                        <div class="d-none d-sm-flex mr-2">
+                                                            <span class="btn btn-icon btn-soft-secondary">
+                                                                <span class="btn-icon__inner text-dark">Bk</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="media-body">
+                                                            <span class="d-inline-block d-sm-none">Block</span>
+                                                            <a
+                                                                href="/block/<%= blockList[i].blockNum %>"><%= blockList[i].blockNum %></a>
+                                                            <span
+                                                                class="d-sm-block small text-secondary ml-1 ml-sm-0 text-nowrap">
+                                                                <time class="timeago"
+                                                                    id="blocktime_<%= blockList[i].blockNum %>"
+                                                                    datetime="<%= blockList[i].createDate.toISOString() %>"></time>
+                                                            </span>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <div class="d-flex justify-content-between">
+                                                        <div class="text-nowrap">
+                                                            <span class="d-block mb-1 mb-sm-0">Channel <a
+                                                                    class="hash-tag text-truncate"
+                                                                    href="#"><%= blockList[i].channelName %></a>
+                                                            </span>
+                                                            <a href="/txs?block=<%= blockList[i].blockNum %>"
+                                                                title="Transactions in this Block"><%= blockList[i].txCount %>
+                                                                txns</a>
+                                                            <!-- <span class="small text-secondary">in 17 secs</span> -->
+                                                        </div>
+                                                        <div class="d-none d-sm-block">
+                                                            <span
+                                                                class="u-label u-label--xs u-label--badge-in u-label--secondary text-center text-nowrap"
+                                                                id="createDate_<%= blockList[i].blockNum %>"
+                                                                title="createDate"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr class="hr-space">
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a class="btn btn-xs btn-block btn-soft-primary" href="/blocks">View all blocks</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card h-100">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h2 class="card-header-title">Transactions</h2>
+                            </div>
+                            <div class="js-scrollbar card-body overflow-hidden mCustomScrollbar _mCS_2 mCS-autoHide"
+                                style="height: 470px; position: relative; overflow: visible;">
+                                <div id="mCSB_2" class="mCustomScrollBox mCS-minimal-dark mCSB_vertical mCSB_outside"
+                                    tabindex="0" style="max-height: none;">
+                                    <div id="mCSB_2_container" class="mCSB_container"
+                                        style="position:relative; top:0; left:0;" dir="ltr">
+                                        <div id="transaction">
+                                            <% for (var i=0; i<transactionList.length; i++) { %>
+                                            <div class="row" id="transactionList_<%= transactionList[i].id %>">
+                                                <div class="col-sm-4">
+                                                    <div class="media align-items-sm-center mr-4 mb-1 mb-sm-0">
+                                                        <div class="d-none d-sm-flex mr-2">
+                                                            <span
+                                                                class="btn btn-icon btn-soft-secondary rounded-circle">
+                                                                <span class="btn-icon__inner text-dark">Tx</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="media-body">
+                                                            <span class="d-inline-block d-sm-none mr-1">Tx#</span>
+                                                            <a class="hash-tag hash-tag--xs hash-tag-xs-down--md text-truncate"
+                                                                href="/tx/<%= transactionList[i].txHash %>"><%= transactionList[i].txHash %></a>
+                                                            <span
+                                                                class="d-sm-block small text-secondary ml-1 ml-sm-0 text-nowrap">
+                                                                <time class="timeago"
+                                                                    id="transactiontime_<%= transactionList[i].id %>"
+                                                                    datetime="<%= transactionList[i].createDate.toISOString() %>">1</time>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <div class="d-sm-flex justify-content-between">
+                                                        <div class="text-nowrap mr-4 mb-1 mb-sm-0">
+
+                                                            <% function getto(i){ return (JSON.parse(transactionList[i].writeSet)[2].key.substr(5) == JSON.parse(transactionList[i].writeSet)[0].key)?JSON.parse(transactionList[i].writeSet)[1].key:JSON.parse(transactionList[i].writeSet)[0].key} %>
+                                                            <% if( JSON.parse(transactionList[i].writeSet)[1].key.substr(0,5) != "NONCE") { %>
+                                                            <span>From <a class="hash-tag text-truncate"
+                                                                    href="/address/<%= JSON.parse(transactionList[i].writeSet)[2].key.substr(5) %>"><%= JSON.parse(transactionList[i].writeSet)[2].key.substr(5) %></a></span>
+                                                            <span class="d-sm-block">To
+                                                                <a href="/address/<%= getto(i) %>"
+                                                                    class="hash-tag hash-tag--sm text-truncate">
+                                                                    <%= getto(i) %>
+                                                                </a></span>
+
+                                                            <% } else { %>
+                                                            <span>From <a class="hash-tag text-truncate"
+                                                                    href="/address/<%= JSON.parse(transactionList[i].writeSet)[0].key %>"><%= JSON.parse(transactionList[i].writeSet)[0].key %></a></span>
+                                                            <span class="d-sm-block">To
+                                                            </span>
+                                                            <% } %>
+                                                        </div>
+                                                        <div>
+                                                            <span
+                                                                class="u-label u-label--xs u-label--badge-in u-label--secondary text-center text-nowrap"
+                                                                id="createtx_<%=transactionList[i].id %>"
+                                                                title="createDate"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr class="hr-space">
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                                <a class="btn btn-xs btn-block btn-soft-primary" href="/txs">View All Transactions</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <input type="hidden" id="status" value="Not connected"></input>
+        <footer>
+            <% include ./footer %>
+        </footer>
+
+    </div>
+    <script>
+        $(window).on("load", function () {
+            $("#btnSearch").click(function () {
+                var filter = $("#f option:selected").val();
+                var keyword = $("#q").val();
+                window.location.href = "/search/" + filter + "/" + keyword;
+                return;
+            });
+            $("#q").keypress(function (e) {
+                if (e.which == 13) {
+                    var filter = $("#f option:selected").val();
+                    var keyword = $("#q").val();
+                    window.location.href = "/search/" + filter + "/" + keyword;
+                }
+            });
+        });
+        jQuery(document).ready(function () {
+            $("time.timeago").timeago();
+        });
+    </script>
+    <script>
+        var block = <%- JSON.stringify(blockList) %>;
+        for (var i = 0; i < block.length; i++) {
+            document.getElementById("createDate_" + block[i].blockNum).innerHTML = new Date(block[i].createDate);
+        }
+        var transaction = <%- JSON.stringify(transactionList) %>;
+        for (var i = 0; i < transaction.length; i++) {
+            document.getElementById("createtx_" + transaction[i].id).innerHTML = new Date(transaction[i].createDate);
+
+        }
+
+        var lastblockNum = block[0].blockNum ? block[0].blockNum : -1;
+        var lasttxid = transaction[0].id ? transaction[0].id : -1;
+        var websocket;
+
+        function init() {
+            // websocket = new WebSocket("ws://54.180.104.97:8080");
+            websocket = new WebSocket("ws://54.180.104.97:8080", 'echo-protocol');
+
+            websocket.onopen = function () {
+                $("#status").val("Connected");
+                //websocket.send(lastblock.blockNum);
+                websocket.send(JSON.stringify({ blockNum: lastblockNum, txid: lasttxid }));
+            };
+
+            websocket.onerror = function (event) {
+                $("#status").val("Error");
+            };
+
+            websocket.onmessage = function (event) {
+                var newdata = JSON.parse(event.data);
+
+                var blockData = newdata.block;
+                if (blockData != null && blockData.blockNum == lastblockNum + 1) {
+                    //if (blockData != null ) {
+                    $('#block').prepend('<div class="addrow" style="opacity:0"><div class="col-sm-4"><div class="media align-items-sm-center mr-4 mb-1 mb-sm-0"><div class="d-none d-sm-flex mr-2"><span class= "btn btn-icon btn-soft-secondary" ><span class="btn-icon__inner text-dark">Bk</span></span ></div ><div class="media-body"><span class="d-inline-block d-sm-none">Block</span><a id = "blockNum">10</a><span class="d-sm-block small text-secondary ml-1 ml-sm-0 text-nowrap"><time class="addtimeago"></time></span></div></div > </div ><div class="col-sm-8"><div class="d-flex justify-content-between"><div class="text-nowrap"><span class="d-block mb-1 mb-sm-0">Channel <a id = "channel" class="hash-tag text-truncate"> </a></span><a id = "blockTx" title="Transactions in this Block"> </a></div><div class="d-none d-sm-block"><span class="u-label u-label--xs u-label--badge-in u-label--secondary text-center text-nowrap" title="createDate" id = "createDate" ></span></div></div></div></div><hr class="hr-space" style="">');
+
+                    $('.addrow').attr("id", "blockList_" + blockData.blockNum);
+                    $('.addrow').animate({ opacity: "1" }, 1500);
+                    $('.addrow').attr("class", "row");
+                    $('.addtimeago').attr("id", "blocktime_" + blockData.blockNum);
+                    $('.addtimeago').attr("class", "timeago");
+                    $('#blockNum').attr("id", "blockNum_" + blockData.blockNum);
+                    $('#channel').attr("id", "channel_" + blockData.blockNum);
+                    $('#blockTx').attr("id", "blockTx_" + blockData.blockNum);
+                    $('#createDate').attr("id", "createDate_" + blockData.blockNum);
+                    $("#blocktime_" + blockData.blockNum).attr("datetime", blockData.createDate);
+                    $("#blocktime_" + blockData.blockNum).timeago();
+
+                    document.getElementById("blockNum_" + blockData.blockNum).innerHTML = blockData.blockNum;
+                    document.getElementById("blockNum_" + blockData.blockNum).href = "/block/" + blockData.blockNum;
+                    document.getElementById("channel_" + blockData.blockNum).innerHTML = blockData.channelName;
+                    document.getElementById("channel_" + blockData.blockNum).href = "#";
+                    document.getElementById("blockTx_" + blockData.blockNum).innerHTML = blockData.txCount + " txns";
+                    document.getElementById("blockTx_" + blockData.blockNum).href = "/txs?block=" + blockData.blockNum;
+                    document.getElementById("createDate_" + blockData.blockNum).innerHTML = new Date(blockData.createDate);
+                    //   websocket.send(blockData.blockNum);
+                    var removeblock = blockData.blockNum - 10;
+                    $(".row").remove("#blockList_" + removeblock);
+                    lastblockNum += 1;
+
+                }
+                var txData = newdata.transaction;
+                if (txData != null && txData.id == lasttxid + 1) {
+                    //if (txData != null ) {
+                    $('#transaction').prepend('<div class="addrow" style="opacity:0"><div class="col-sm-4"><div class="media align-items-sm-center mr-4 mb-1 mb-sm-0"><div class="d-none d-sm-flex mr-2"><span class="btn btn-icon btn-soft-secondary rounded-circle"><span class="btn-icon__inner text-dark">Tx</span></span></div><div class="media-body"><span class="d-inline-block d-sm-none mr-1">Tx#</span><a class="hash-tag hash-tag--xs hash-tag-xs-down--md text-truncate" id = "txHash"> </a><span class="d-sm-block small text-secondary ml-1 ml-sm-0 text-nowrap"><time class="addtimeago"></time></span></div></div></div><div class="col-sm-8"><div class="d-sm-flex justify-content-between"><div class="text-nowrap mr-4 mb-1 mb-sm-0"><span>From <a class="hash-tag text-truncate" id = "sender"> </a></span><span class="d-sm-block">To <a id = "receiver" class="hash-tag hash-tag--sm text-truncate"> </a></span></div><div><span id = "createtx" class="u-label u-label--xs u-label--badge-in u-label--secondary text-center text-nowrap" title="createDate"></span></div></div></div></div><hr class="hr-space" style=""> ');
+
+                    $('.addrow').attr("id", "transactionList_" + txData.id);
+                    $('.addrow').animate({ opacity: "1" }, 1500);
+                    $('.addrow').attr("class", "row");
+                    $('.addtimeago').attr("id", "transactiontime_" + txData.id);
+                    $('.addtimeago').attr("class", "timeago");
+                    $('#txHash').attr("id", "txHash_" + txData.id);
+                    $('#sender').attr("id", "sender_" + txData.id);
+                    $('#receiver').attr("id", "receiver_" + txData.id);
+                    $('#createtx').attr("id", "createtx_" + txData.id);
+                    $("#transactiontime_" + txData.id).attr("datetime", txData.createDate);
+                    $("#transactiontime_" + txData.id).timeago();
+
+                    document.getElementById("txHash_" + txData.id).innerHTML = txData.txHash;
+                    document.getElementById("txHash_" + txData.id).href = "/tx/" + txData.txHash;
+            
+                    if (JSON.parse(txData.writeSet)[1].key.substr(0, 5) != "NONCE") {
+                        document.getElementById("sender_" + txData.id).innerHTML = JSON.parse(txData.writeSet)[2].key.substr(5);
+                        document.getElementById("sender_" + txData.id).href = "/address/" + JSON.parse(txData.writeSet)[2].key.substr(5);
+                        let to = (JSON.parse(txData.writeSet)[2].key.substr(5)==JSON.parse(txData.writeSet)[0].key)?JSON.parse(txData.writeSet)[1].key:JSON.parse(txData.writeSet)[0].key;
+                        document.getElementById("receiver_" + txData.id).innerHTML = to;
+                        document.getElementById("receiver_" + txData.id).href = "/address/" + to;
+                    } else {
+                        document.getElementById("sender_" + txData.id).innerHTML = JSON.parse(txData.writeSet)[0].key.substr(5);
+                        document.getElementById("sender_" + txData.id).href = "/address/" + JSON.parse(txData.writeSet)[0].key.substr(5);
+                      
+                    }
+                    document.getElementById("createtx_" + txData.id).innerHTML = new Date(txData.createDate);
+                    var removetransaction = txData.id - 10;
+                    $(".row").remove("#transactionList_" + removetransaction);
+                    lasttxid = lasttxid + 1;
+                }
+            }
+        };
+        window.addEventListener("load", init, false);
+    </script>
+</body>
+
+</html>

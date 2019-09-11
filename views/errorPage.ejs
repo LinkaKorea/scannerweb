@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <title>linkascan</title>
+    <link rel="stylesheet" href="/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/css/animate.min.css">
+    <link rel="stylesheet" href="/css/hs.megamenu.css">
+    <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="/css/jquery-ui.min.css?v=0.0.7">
+    <link rel="stylesheet" href="/css/theme.min.css?v=0.4.3.4">
+    <link rel="stylesheet" href="/css/custom.css?v=0.4.1.1">
+    <script src="/lib/jquery-3.3.1.min.js"></script>
+</head>
+
+<body id="body">
+    <div class="wrapper">
+
+
+        <header id="header" class="u-header" include-html>
+            <% include ./header %>
+        </header>
+        <main id="content" class="bg-light" role="main">
+            <div class="container d-lg-flex align-items-lg-center min-height-550 space-1">
+                <div class="w-lg-60 w-xl-50">
+
+                    <div class="mb-5">
+                        <h1 class="text-primary font-weight-normal">Search not <span
+                                class="font-weight-semi-bold">found</span></h1>
+                        <p class="mb-0">Oops! The search string you entered was: <b><%= inputstring %></b></p>
+                        <p>Sorry! This is an invalid search string.</p>
+                    </div>
+
+                    <a class="btn btn-primary btn-wide transition-3d-hover" href="/">Back Home</a>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

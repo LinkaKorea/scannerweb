@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <title>linkascan</title>
+    <link rel="stylesheet" href="/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/css/animate.min.css">
+    <link rel="stylesheet" href="/css/hs.megamenu.css">
+    <link rel="stylesheet" href="/css/jquery.mCustomScrollbar.css">
+    <link rel="stylesheet" href="/css/jquery-ui.min.css?v=0.0.7">
+    <link rel="stylesheet" href="/css/theme.min.css?v=0.4.3.4">
+    <link rel="stylesheet" href="/css/custom.css?v=0.4.1.1">
+    <script src="/lib/jquery-3.3.1.min.js"></script>
+</head>
+
+<body id="body">
+    <div class="wrapper">
+        <header id="header" class="u-header" include-html>
+            <% include ./header %>
+        </header>
+        <main id="content" class="bg-light" role="main">
+            <div class="container py-3">
+                <div class="d-sm-flex align-items-center">
+                    <div class="mb-2 mb-sm-0">
+                        <h1 class="h4 mb-0">Address <span
+                                class="small text-secondary">&nbsp;#<%= balance.address %></span><br></h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container space-bottom-2">
+                <div class="card">
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="home-tab">
+                            <div id="ContentPlaceHolder1_maintable" class="card-body">
+
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">Balance:
+                                    </div>
+                                    <div class="col-md-9">
+
+                                        <% function pad(n, width) { n = n + ''; return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n; } %>
+                                        <%= pad(balance.balance, 19).replace(/\B(?=(\d{18}$))/g, ".") %>
+
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">
+                                        CurrencyType:</div>
+                                    <div class="col-md-9">
+                                        <%= balance.currencyType %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">
+                                        Timestamp:</div>
+                                    <div class="col-md-9">
+                                        <%= balance.createDate %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                                <div class="row align-items-center">
+                                    <div class="col-md-3 font-weight-bold font-weight-sm-normal mb-1 mb-md-0e">Timestamp
+                                        Update:</div>
+                                    <div class="col-md-9">
+                                        <%= balance.updateDate %>
+                                    </div>
+                                </div>
+                                <hr class="hr-space">
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <% include ./footer %>
+        </footer>
+    </div>
+</body>
+
+</html>
